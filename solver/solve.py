@@ -19,7 +19,9 @@ def get_wordbase(num_letters) -> List[str]:
 
 
 def constrain_regex(
-    knows_at_letters: str, known_not_at_letters: List[str], restricted_letters: List[str]
+    knows_at_letters: str,
+    known_not_at_letters: List[str],
+    restricted_letters: List[str],
 ) -> str:
     alphabet = [alpha for alpha in ALPHABET if alpha not in restricted_letters]
 
@@ -46,10 +48,8 @@ def get_player_input(
     known_at_letters, known_not_at_letters, restricted_letters
 ) -> Tuple[List[str], List[str], List[str]]:
     kal_input = input(f"Known at letters, e.g *it**. Current ='{known_at_letters}' : ")
-    knal_input = (
-        input(
-            f"Known not at letters, e.g ****r. Current = '{known_not_at_letters}' : "
-        )
+    knal_input = input(
+        f"Known not at letters, e.g ****r. Current = '{known_not_at_letters}' : "
     )
     rl_input = input(f"New restricted letters (current= '{restricted_letters}'): ")
 
@@ -77,13 +77,24 @@ def play(num_letters=5):
         known_at_letters, known_not_at__letters, restricted_letters = get_player_input(
             known_at_letters, known_not_at__letters, restricted_letters
         )
+        should_include = input("Word should include letters: ") or []
 
         rgx = constrain_regex(
             known_at_letters, known_not_at__letters, restricted_letters
         )
+        print("Regex: ", rgx)
 
-        solvers = [word for word in wordbase if re.search(rgx, word)]
-        display(solvers)
+        solvers = [
+            word
+            for word in wordbase
+            if re.search(rgx, word)
+        ]
+        solvers_ = []
+        for word in solvers:
+            if all((c in word for c in should_include)):
+                solvers_.append(word)
+
+        display(solvers_)
 
 
 if __name__ == "__main__":
